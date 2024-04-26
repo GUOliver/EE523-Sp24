@@ -1,5 +1,8 @@
 package com.example.mybluetooth
 
+import BluetoothFragment
+import CameraFragment
+import HomeFragment
 import android.Manifest
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
@@ -9,86 +12,95 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ListView
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import com.google.android.gms.nearby.connection.ConnectionsClient
+import androidx.fragment.app.Fragment
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import java.util.UUID
 
 class MainActivity : AppCompatActivity() {
 
+    // Lazy initialization of BluetoothAdapter
     private val bluetoothAdapter: BluetoothAdapter? by lazy(LazyThreadSafetyMode.NONE) {
         val bluetoothManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         bluetoothManager.adapter
     }
-    // ArrayAdapter to manage the display of discovered devices in the ListView
+
+    // ArrayAdapter to manage the display of Bluetooth devices
     private lateinit var arrayAdapter: ArrayAdapter<String>
-    private lateinit var buttonDiscover: Button
+    // Define a request code for handling permission requests
+    private val locationPermissionRequestCode = 101
+    private val bluetoothScanPermissionRequestCode = 102
+    // UUID for Serial Port Profile
+    private val uuid: UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_main)
-        buttonDiscover = findViewById(R.id.button_Discover)
-        // Setup the ListView and ArrayAdapter to display discovered devices
+
+        val navView: BottomNavigationView = findViewById(R.id.navigation)
+        navView.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.navigation_home -> {
+                    replaceFragment(HomeFragment())
+                    true
+                }
+                R.id.navigation_camera -> {
+                    // Handle camera action
+                    replaceFragment(CameraFragment())
+                    true
+                }
+                R.id.navigation_bluetooth -> {
+                    replaceFragment(BluetoothFragment())
+                    // Handle Bluetooth action
+                    true
+                }
+                else -> false
+            }
+        }
+
+        if (savedInstanceState == null) {
+            navView.selectedItemId = R.id.navigation_home // set home as default selected item
+        }
+
+        // Setup ListView and ArrayAdapter
         val listView: ListView = findViewById(R.id.listViewScannedDevices)
         arrayAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1)
         listView.adapter = arrayAdapter
 
-        // IntentFilter to listen for Bluetooth devices found during discovery
+        // Set up a button listener to initiate Bluetooth discovery
+        findViewById<Button>(R.id.button_Discover).setOnClickListener {
+            checkPermissions()
+        }
+
+        // Register BroadcastReceiver to listen for Bluetooth discovery results
         val filter = IntentFilter(BluetoothDevice.ACTION_FOUND)
         registerReceiver(receiver, filter)
-
-
-        buttonDiscover.setOnClickListener {
-            startDiscovery()
-        }
-
     }
 
-    // Method to start the Bluetooth discovery process
-    private fun startDiscovery() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) == PackageManager.PERMISSION_GRANTED) {
-            bluetoothAdapter?.startDiscovery()
-        } else {
-            // Show a toast message if BLUETOOTH_SCAN permission is not granted
-            Toast.makeText(this, "BLUETOOTH_SCAN permission not granted", Toast.LENGTH_SHORT).show()
-        }
+    private fun replaceFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .commit()
     }
-
-    private val requestMultiplePermissions = registerForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissions ->
-        if (permissions.entries.any { !it.value }) {
-            Toast.makeText(this, "Required permissions needed", Toast.LENGTH_LONG).show()
-            finish()
-        } else {
-            recreate()
-        }
-    }
-
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             when (intent.action) {
                 BluetoothDevice.ACTION_FOUND -> {
-                    // Retrieve the BluetoothDevice from the intent
+                    // Extract the BluetoothDevice from the Intent
                     val device: BluetoothDevice? = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
                     device?.let {
-                        // Check for BLUETOOTH_CONNECT permission before accessing device name and address
-                        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT)
-                            == PackageManager.PERMISSION_GRANTED) {
-                            // Add the device name and address to the ArrayAdapter for display in the ListView
-                            Toast.makeText(context, "Found device: ${device.name}", Toast.LENGTH_SHORT).show()
-
+                        if (ActivityCompat.checkSelfPermission(
+                                context,
+                                Manifest.permission.BLUETOOTH_CONNECT
+                            ) == PackageManager.PERMISSION_GRANTED
+                        ) {
                             arrayAdapter.add("${it.name ?: "Unknown"} | ${it.address}")
                         }
                     }
@@ -97,37 +109,73 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        if (!hasPermissions(this, REQUIRED_PERMISSIONS)) {
-            requestMultiplePermissions.launch(
-                REQUIRED_PERMISSIONS
-            )
-        }
-    }
+    private fun checkPermissions() {
+        val permissions = arrayOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.BLUETOOTH_SCAN
+        )
 
-    private fun hasPermissions(context: Context, permissions: Array<String>): Boolean {
-        return permissions.isEmpty() || permissions.all {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED ||
             ContextCompat.checkSelfPermission(
-                context,
-                it
-            ) == PackageManager.PERMISSION_GRANTED
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(this, permissions, locationPermissionRequestCode)
+        } else if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.BLUETOOTH_SCAN
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.BLUETOOTH_SCAN), bluetoothScanPermissionRequestCode)
+        } else {
+            startDiscovery()
         }
     }
 
-    private companion object {
-        val REQUIRED_PERMISSIONS =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                arrayOf(
-                    Manifest.permission.BLUETOOTH_SCAN,
-                    Manifest.permission.BLUETOOTH_ADVERTISE,
-                    Manifest.permission.BLUETOOTH_CONNECT,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                )
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
-            } else {
-                arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION)
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            locationPermissionRequestCode -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    checkBluetoothScanPermission()
+                } else {
+                    Toast.makeText(this, "Location permission denied. Cannot discover devices.", Toast.LENGTH_SHORT).show()
+                }
             }
+            bluetoothScanPermissionRequestCode -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    startDiscovery()
+                } else {
+                    Toast.makeText(this, "Bluetooth scan permission denied. Cannot discover devices.", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    private fun checkBluetoothScanPermission() {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.BLUETOOTH_SCAN
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.BLUETOOTH_SCAN), bluetoothScanPermissionRequestCode)
+        } else {
+            startDiscovery()
+        }
+    }
+
+    private fun startDiscovery() {
+        bluetoothAdapter?.startDiscovery()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // Unregister the broadcast receiver to avoid memory leaks
+        unregisterReceiver(receiver)
     }
 }

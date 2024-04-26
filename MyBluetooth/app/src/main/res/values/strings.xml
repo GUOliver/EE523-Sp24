@@ -2,4 +2,6 @@
     <string name="app_name">MyBluetooth</string>
     <string name="discover_button">Discover</string>
     <string name="display_scanned_devices">Hello</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
