@@ -1,4 +1,4 @@
-# Install script for directory: /Users/stlp/Desktop/Kotlin/SwapSense/opencv/libcxx_helper
+# Install script for directory: /Users/oliver/UW/523/EE523-Sp24/FaceSwap-main/opencv/libcxx_helper
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -39,7 +39,7 @@ endif()
 
 # Set default install directory permissions.
 if(NOT DEFINED CMAKE_OBJDUMP)
-  set(CMAKE_OBJDUMP "/Users/stlp/Library/Android/sdk/ndk/25.1.8937393/toolchains/llvm/prebuilt/darwin-x86_64/bin/llvm-objdump")
+  set(CMAKE_OBJDUMP "/Users/oliver/Library/Android/sdk/ndk/25.1.8937393/toolchains/llvm/prebuilt/darwin-x86_64/bin/llvm-objdump")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/Users/stlp/Desktop/Kotlin/SwapSense/opencv/.cxx/Debug/u5h47123/x86/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/Users/oliver/UW/523/EE523-Sp24/FaceSwap-main/opencv/.cxx/Debug/u5h47123/x86/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

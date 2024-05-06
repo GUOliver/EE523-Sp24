@@ -17,7 +17,7 @@
 rule CXX_COMPILER__opencv_jni_shared_Debug
   depfile = $DEP_FILE
   deps = gcc
-  command = /Users/stlp/Library/Android/sdk/ndk/25.1.8937393/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=i686-none-linux-android21 --sysroot=/Users/stlp/Library/Android/sdk/ndk/25.1.8937393/toolchains/llvm/prebuilt/darwin-x86_64/sysroot $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  command = /Users/oliver/Library/Android/sdk/ndk/25.1.8937393/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=i686-none-linux-android21 --sysroot=/Users/oliver/Library/Android/sdk/ndk/25.1.8937393/toolchains/llvm/prebuilt/darwin-x86_64/sysroot $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
   description = Building CXX object $out
 
 
@@ -25,7 +25,7 @@ rule CXX_COMPILER__opencv_jni_shared_Debug
 # Rule for linking CXX static library.
 
 rule CXX_STATIC_LIBRARY_LINKER__opencv_jni_shared_Debug
-  command = $PRE_LINK && /Users/stlp/Library/Android/sdk/cmake/3.22.1/bin/cmake -E rm -f $TARGET_FILE && /Users/stlp/Library/Android/sdk/ndk/25.1.8937393/toolchains/llvm/prebuilt/darwin-x86_64/bin/llvm-ar qc $TARGET_FILE $LINK_FLAGS $in && /Users/stlp/Library/Android/sdk/ndk/25.1.8937393/toolchains/llvm/prebuilt/darwin-x86_64/bin/llvm-ranlib $TARGET_FILE && /Users/stlp/Library/Android/sdk/cmake/3.22.1/bin/cmake -E touch $TARGET_FILE && $POST_BUILD
+  command = $PRE_LINK && /Users/oliver/Library/Android/sdk/cmake/3.22.1/bin/cmake -E rm -f $TARGET_FILE && /Users/oliver/Library/Android/sdk/ndk/25.1.8937393/toolchains/llvm/prebuilt/darwin-x86_64/bin/llvm-ar qc $TARGET_FILE $LINK_FLAGS $in && /Users/oliver/Library/Android/sdk/ndk/25.1.8937393/toolchains/llvm/prebuilt/darwin-x86_64/bin/llvm-ranlib $TARGET_FILE && /Users/oliver/Library/Android/sdk/cmake/3.22.1/bin/cmake -E touch $TARGET_FILE && $POST_BUILD
   description = Linking CXX static library $TARGET_FILE
   restat = $RESTAT
 
@@ -42,7 +42,7 @@ rule CUSTOM_COMMAND
 # Rule for re-running cmake.
 
 rule RERUN_CMAKE
-  command = /Users/stlp/Library/Android/sdk/cmake/3.22.1/bin/cmake --regenerate-during-build -S/Users/stlp/Desktop/Kotlin/SwapSense/opencv/libcxx_helper -B/Users/stlp/Desktop/Kotlin/SwapSense/opencv/.cxx/Debug/u5h47123/x86
+  command = /Users/oliver/Library/Android/sdk/cmake/3.22.1/bin/cmake --regenerate-during-build -S/Users/oliver/UW/523/EE523-Sp24/FaceSwap-main/opencv/libcxx_helper -B/Users/oliver/UW/523/EE523-Sp24/FaceSwap-main/opencv/.cxx/Debug/u5h47123/x86
   description = Re-running CMake...
   generator = 1
 
@@ -51,7 +51,7 @@ rule RERUN_CMAKE
 # Rule for cleaning all built files.
 
 rule CLEAN
-  command = /Users/stlp/Library/Android/sdk/cmake/3.22.1/bin/ninja $FILE_ARG -t clean $TARGETS
+  command = /Users/oliver/Library/Android/sdk/cmake/3.22.1/bin/ninja $FILE_ARG -t clean $TARGETS
   description = Cleaning all built files...
 
 
@@ -59,6 +59,6 @@ rule CLEAN
 # Rule for printing all primary targets available.
 
 rule HELP
-  command = /Users/stlp/Library/Android/sdk/cmake/3.22.1/bin/ninja -t targets
+  command = /Users/oliver/Library/Android/sdk/cmake/3.22.1/bin/ninja -t targets
   description = All primary targets available:
 

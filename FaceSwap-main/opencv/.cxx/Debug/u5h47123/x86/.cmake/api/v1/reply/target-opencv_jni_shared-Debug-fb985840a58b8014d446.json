@@ -46,7 +46,7 @@
 			],
 			"sysroot" : 
 			{
-				"path" : "/Users/stlp/Library/Android/sdk/ndk/25.1.8937393/toolchains/llvm/prebuilt/darwin-x86_64/sysroot"
+				"path" : "/Users/oliver/Library/Android/sdk/ndk/25.1.8937393/toolchains/llvm/prebuilt/darwin-x86_64/sysroot"
 			}
 		}
 	],

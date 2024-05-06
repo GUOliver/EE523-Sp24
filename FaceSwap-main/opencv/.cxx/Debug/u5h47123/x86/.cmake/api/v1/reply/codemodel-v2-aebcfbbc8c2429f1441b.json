@@ -39,7 +39,7 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "opencv_jni_shared::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-opencv_jni_shared-Debug-6527c1256832af4e7443.json",
+					"jsonFile" : "target-opencv_jni_shared-Debug-fb985840a58b8014d446.json",
 					"name" : "opencv_jni_shared",
 					"projectIndex" : 0
 				}
@@ -49,8 +49,8 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "/Users/stlp/Desktop/Kotlin/SwapSense/opencv/.cxx/Debug/u5h47123/arm64-v8a",
-		"source" : "/Users/stlp/Desktop/Kotlin/SwapSense/opencv/libcxx_helper"
+		"build" : "/Users/oliver/UW/523/EE523-Sp24/FaceSwap-main/opencv/.cxx/Debug/u5h47123/x86",
+		"source" : "/Users/oliver/UW/523/EE523-Sp24/FaceSwap-main/opencv/libcxx_helper"
 	},
 	"version" : 
 	{
